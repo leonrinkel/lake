@@ -169,7 +169,7 @@ module lake
         .i_0(alu_res),
         .i_1(mem_r_data),
         .i_2(pc_plus_4),
-        .i_3(32'bx),
+        .i_3(imm),
         .o_res(rd_val)
     );
 

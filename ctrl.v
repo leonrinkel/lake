@@ -217,6 +217,32 @@ module ctrl
                 endcase
             end
 
+            /* LUI */
+            7'b0110111:
+            begin
+                o_alu_op_a_sel = 1'bx;
+                o_alu_op_b_sel = 1'bx;
+                o_alu_op       = 4'bx;
+                o_reg_w_en     = 1'b1;
+                o_reg_wb_sel   = 2'd3; /* imm */
+                o_mem_fmt      = 3'bx;
+                o_mem_w_en     = 1'b0;
+                o_pc_sel       = 2'd0; /* pc+4 */
+            end
+
+            /* AUIPC */
+            7'b0010111:
+            begin
+                o_alu_op_a_sel = 1'd1; /* pc */
+                o_alu_op_b_sel = 1'd1; /* imm */
+                o_alu_op       = 4'b0000; /* ADD */
+                o_reg_w_en     = 1'b1;
+                o_reg_wb_sel   = 2'd0; /* alu res */
+                o_mem_fmt      = 3'bx;
+                o_mem_w_en     = 1'd0;
+                o_pc_sel       = 2'd0; /* pc+4 */
+            end
+
             default:
             begin
                 o_alu_op_a_sel = 1'bx;
