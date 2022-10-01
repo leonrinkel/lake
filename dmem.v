@@ -1,6 +1,6 @@
 module dmem
 #(
-    parameter SIZE = 256
+    parameter SIZE = 1024
 )
 (
     /* inputs */
@@ -8,6 +8,7 @@ module dmem
     input [31:0] i_addr,
     input [31:0] i_w_data,
     input [ 2:0] i_fmt,
+    input        i_r_en,
     input        i_w_en,
 
     /* outputs */
@@ -16,40 +17,47 @@ module dmem
 
     reg [7:0] mem [SIZE-1:0];
 
-    always @(i_addr, i_fmt)
+    always @(i_r_en, i_addr, i_fmt)
     begin
-        case (i_fmt)
+        if (i_r_en)
+        begin
+            case (i_fmt)
 
-            3'b000: /* byte */
-            begin
-                o_r_data = {
-                    {24{mem[i_addr + 0][7]}},
-                    mem[i_addr + 0]
-                };
-            end
+                3'b000: /* byte */
+                begin
+                    o_r_data = {
+                        {24{mem[i_addr + 0][7]}},
+                        mem[i_addr + 0]
+                    };
+                end
 
-            3'b001: /* half */
-            begin
-                o_r_data = {
-                    {16{mem[i_addr + 1][7]}},
-                    mem[i_addr + 1],
-                    mem[i_addr + 0]
-                };
-            end
+                3'b001: /* half */
+                begin
+                    o_r_data = {
+                        {16{mem[i_addr + 1][7]}},
+                        mem[i_addr + 1],
+                        mem[i_addr + 0]
+                    };
+                end
 
-            3'b010: /* word */
-            begin
-                o_r_data = {
-                    mem[i_addr + 3],
-                    mem[i_addr + 2],
-                    mem[i_addr + 1],
-                    mem[i_addr + 0]
-                };
-            end
+                3'b010: /* word */
+                begin
+                    o_r_data = {
+                        mem[i_addr + 3],
+                        mem[i_addr + 2],
+                        mem[i_addr + 1],
+                        mem[i_addr + 0]
+                    };
+                end
 
-            default: o_r_data = 32'bx;
+                default: o_r_data = 32'bx;
 
-        endcase
+            endcase
+        end
+        else
+        begin
+            o_r_data = 32'b0;
+        end
     end
 
     always_ff @(posedge i_clk)

@@ -9,6 +9,7 @@ riscv64-unknown-elf-gcc \
     -ffreestanding \
     -Tlink.ld \
     -o prog.elf \
+    entry.s \
     prog.c
 
 riscv64-unknown-elf-objcopy \

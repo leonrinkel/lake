@@ -1,4 +1,8 @@
-int fib(int n);
+int fib(int n)
+{
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
+}
 
 void main(void)
 {
@@ -8,17 +12,4 @@ void main(void)
 
     // magic halt inst
     __asm__("li x0, 0x123");
-}
-
-/** iterative fib */
-int fib(int n)
-{
-    int a = 0, b = 1, c;
-    while (--n > 0)
-    {
-        c = a + b;
-        a = b;
-        b = c;
-    }
-    return b;
 }

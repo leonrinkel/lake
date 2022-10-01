@@ -37,11 +37,18 @@ module lake
     wire        alu_op_b_sel;
     wire [ 3:0] alu_op;
     wire [ 1:0] reg_wb_sel;
-    wire [ 2:0] mem_fmt;
-    wire        mem_w_en;
+    wire [ 2:0] bus_fmt;
+    wire        bus_r_en;
+    wire        imem_r_en;
+    wire        dmem_r_en;
+    wire        bus_w_en;
+    wire        imem_w_en;
+    wire        dmem_w_en;
+    wire [31:0] imem_r_data;
+    wire [31:0] dmem_r_data;
+    wire [31:0] bus_r_data;
     wire [31:0] alu_op_a_val;
     wire [31:0] alu_op_b_val;
-    wire [31:0] mem_r_data;
 
     pc pc
     (
@@ -79,7 +86,13 @@ module lake
     (
         .i_clk(i_clk),
         .i_pc(cur_pc),
-        .o_inst(inst)
+        .i_addr({1'b0, alu_res[30:0]}),
+        .i_w_data(rs2_val),
+        .i_fmt(bus_fmt),
+        .i_r_en(imem_r_en),
+        .i_w_en(imem_w_en),
+        .o_inst(inst),
+        .o_r_data(imem_r_data)
     );
 
     dec dec
@@ -123,8 +136,9 @@ module lake
         .o_alu_op(alu_op),
         .o_reg_w_en(reg_w_en),
         .o_reg_wb_sel(reg_wb_sel),
-        .o_mem_fmt(mem_fmt),
-        .o_mem_w_en(mem_w_en),
+        .o_bus_fmt(bus_fmt),
+        .o_bus_r_en(bus_r_en),
+        .o_bus_w_en(bus_w_en),
         .o_pc_sel(pc_sel)
     );
 
@@ -156,22 +170,33 @@ module lake
     dmem dmem
     (
         .i_clk(i_clk),
-        .i_addr(alu_res),
+        .i_addr({1'b0, alu_res[30:0]}),
         .i_w_data(rs2_val),
-        .i_fmt(mem_fmt),
-        .i_w_en(mem_w_en),
-        .o_r_data(mem_r_data)
+        .i_fmt(bus_fmt),
+        .i_r_en(dmem_r_en),
+        .i_w_en(dmem_w_en),
+        .o_r_data(dmem_r_data)
     );
 
     mux4 reg_wb_mux
     (
         .i_sel(reg_wb_sel),
         .i_0(alu_res),
-        .i_1(mem_r_data),
+        .i_1(bus_r_data),
         .i_2(pc_plus_4),
         .i_3(imm),
         .o_res(rd_val)
     );
+
+    /* imem at 0x00000000 - 0x7FFFFFFF */
+    assign imem_r_en = bus_r_en & ~alu_res[31];
+    assign imem_w_en = bus_w_en & ~alu_res[31];
+
+    /* dmem at 0x80000000 - 0xFFFFFFFF */
+    assign dmem_r_en = bus_r_en & alu_res[31];
+    assign dmem_w_en = bus_w_en & alu_res[31];
+
+    assign bus_r_data = imem_r_data | dmem_r_data;
 
     /* magic halt inst */
     assign o_halt = (inst == 32'h12300013);

@@ -12,8 +12,9 @@ module ctrl
     output reg [3:0] o_alu_op,
     output reg       o_reg_w_en,
     output reg [1:0] o_reg_wb_sel,
-    output reg [2:0] o_mem_fmt,
-    output reg       o_mem_w_en,
+    output reg [2:0] o_bus_fmt,
+    output reg       o_bus_r_en,
+    output reg       o_bus_w_en,
     output reg [1:0] o_pc_sel
 );
 
@@ -28,8 +29,9 @@ module ctrl
                 o_alu_op_b_sel = 1'b1; /* imm */
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd0; /* alu res */
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = 3'bx;
+                o_bus_r_en     = 1'b0;
+                o_bus_w_en     = 1'b0;
                 o_pc_sel       = 2'd0; /* pc+4 */
 
                 case (i_funct3)
@@ -59,8 +61,9 @@ module ctrl
                 o_alu_op_b_sel = 1'b0; /* rs2 */
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd0; /* alu res */
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = 3'bx;
+                o_bus_r_en     = 1'b0;
+                o_bus_w_en     = 1'b0;
                 o_pc_sel       = 2'd0; /* pc+4 */
 
                 case (i_funct3)
@@ -98,8 +101,9 @@ module ctrl
                 o_alu_op       = 4'b0000; /* ADD */
                 o_reg_w_en     = 1'b0;
                 o_reg_wb_sel   = 2'bx;
-                o_mem_fmt      = i_funct3;
-                o_mem_w_en     = 1'b1;
+                o_bus_fmt      = i_funct3;
+                o_bus_r_en     = 1'b0;
+                o_bus_w_en     = 1'b1;
                 o_pc_sel       = 2'd0; /* pc+4 */
             end
 
@@ -111,8 +115,9 @@ module ctrl
                 o_alu_op       = 4'b0000; /* ADD */
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd1; /* mem */
-                o_mem_fmt      = i_funct3;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = i_funct3;
+                o_bus_r_en     = 1'b1;
+                o_bus_w_en     = 1'b0;
                 o_pc_sel       = 2'd0; /* pc+4 */
             end
 
@@ -124,8 +129,9 @@ module ctrl
                 o_alu_op       = 4'b0000; /* ADD */
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd2; /* pc+4 */
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = 3'bx;
+                o_bus_r_en     = 1'b0;
+                o_bus_w_en     = 1'b0;
                 o_pc_sel       = 2'd1; /* alu res */
             end
 
@@ -137,8 +143,9 @@ module ctrl
                 o_alu_op       = 4'b0000; /* ADD */
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd2; /* pc+4 */
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = 3'bx;
+                o_bus_r_en     = 1'b0;
+                o_bus_w_en     = 1'b0;
                 o_pc_sel       = 2'd1; /* alu res */
             end
 
@@ -149,8 +156,9 @@ module ctrl
                 o_alu_op_b_sel = 1'b0; /* rs2 */
                 o_reg_w_en     = 1'b0;
                 o_reg_wb_sel   = 2'bx;
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = 3'bx;
+                o_bus_r_en     = 1'b0;
+                o_bus_w_en     = 1'b0;
 
                 case (i_funct3)
 
@@ -225,8 +233,8 @@ module ctrl
                 o_alu_op       = 4'bx;
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd3; /* imm */
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'b0;
+                o_bus_fmt      = 3'bx;
+                o_bus_w_en     = 1'b0;
                 o_pc_sel       = 2'd0; /* pc+4 */
             end
 
@@ -238,8 +246,8 @@ module ctrl
                 o_alu_op       = 4'b0000; /* ADD */
                 o_reg_w_en     = 1'b1;
                 o_reg_wb_sel   = 2'd0; /* alu res */
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'd0;
+                o_bus_fmt      = 3'bx;
+                o_bus_w_en     = 1'd0;
                 o_pc_sel       = 2'd0; /* pc+4 */
             end
 
@@ -250,8 +258,9 @@ module ctrl
                 o_alu_op       = 4'bx;
                 o_reg_w_en     = 1'bx;
                 o_reg_wb_sel   = 2'bx;
-                o_mem_fmt      = 3'bx;
-                o_mem_w_en     = 1'bx;
+                o_bus_fmt      = 3'bx;
+                o_bus_r_en     = 1'bx;
+                o_bus_w_en     = 1'bx;
                 o_pc_sel       = 2'bx;
             end
 
