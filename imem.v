@@ -36,7 +36,8 @@ module imem
         begin
             case (i_fmt)
 
-                3'b000: /* byte */
+                /* LB */
+                3'b000:
                 begin
                     o_r_data = {
                         {24{mem[i_addr + 0][7]}},
@@ -44,7 +45,17 @@ module imem
                     };
                 end
 
-                3'b001: /* half */
+                /* LBU */
+                3'b100:
+                begin
+                    o_r_data = {
+                        24'h000000,
+                        mem[i_addr + 0]
+                    };
+                end
+
+                /* LH */
+                3'b001:
                 begin
                     o_r_data = {
                         {16{mem[i_addr + 1][7]}},
@@ -53,7 +64,18 @@ module imem
                     };
                 end
 
-                3'b010: /* word */
+                /* LHU */
+                3'b101:
+                begin
+                    o_r_data = {
+                        16'h0000,
+                        mem[i_addr + 1],
+                        mem[i_addr + 0]
+                    };
+                end
+
+                /* LW */
+                3'b010:
                 begin
                     o_r_data = {
                         mem[i_addr + 3],
